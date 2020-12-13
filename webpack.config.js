@@ -4,7 +4,10 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const webpack = require('webpack');
 
 module.exports = {
-  entry: './src/index.js',
+  entry: {
+    index: './src/index/index.js',
+    list: './src/list/index.js'
+  },
   output: {
     // filename: '[name]-[chunkhash:8].js',   // webpack.HotModuleReplacementPlugin() no use chunkhash contextHash
     filename: '[name].js',
@@ -61,7 +64,12 @@ module.exports = {
     new HtmlWebpackPlugin({
       title: 'My App',
       filename: 'index.html',
-      template: './src/index.html'
+      template: './src/index/index.html'
+    }),
+    new HtmlWebpackPlugin({
+      title: 'list',
+      filename: 'list.html',
+      template: './src/list/index.html'
     }),
     new webpack.HotModuleReplacementPlugin()
   ],
