@@ -1,4 +1,6 @@
 // index.js
+import '@babel/polyfill';
+
 import css from './index.css';
 import './index.less';
 
