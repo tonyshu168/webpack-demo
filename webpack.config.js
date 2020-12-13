@@ -1,13 +1,38 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const glob = require('glob');
 const webpack = require('webpack');
 
+const setMpa = () => {
+  const entry = {};
+  const htmlwebpackplugins = [];
+
+  const entryFiles = glob.sync(path.join(__dirname, './src/*/index.js'));
+
+  entryFiles.map((item, index) => {
+    const match = item.match(/src\/(.*)\/index\.js$/);
+    const pageName = match[1];
+    entry[pageName] = item;
+
+    htmlwebpackplugins.push(
+      new HtmlWebpackPlugin({
+        template: path.join(__dirname, `./src/${pageName}/index.html`),
+        filename: `html/${pageName}.html`,
+        chunks: [pageName]
+      })
+    );
+  });
+  return {
+    entry,
+    htmlwebpackplugins
+  }
+}
+
+const { entry, htmlwebpackplugins } = setMpa();
+
 module.exports = {
-  entry: {
-    index: './src/index/index.js',
-    list: './src/list/index.js'
-  },
+  entry,
   output: {
     // filename: '[name]-[chunkhash:8].js',   // webpack.HotModuleReplacementPlugin() no use chunkhash contextHash
     filename: '[name].js',
@@ -61,16 +86,7 @@ module.exports = {
   },
   plugins: [
     new CleanWebpackPlugin(),
-    new HtmlWebpackPlugin({
-      title: 'My App',
-      filename: 'index.html',
-      template: './src/index/index.html'
-    }),
-    new HtmlWebpackPlugin({
-      title: 'list',
-      filename: 'list.html',
-      template: './src/list/index.html'
-    }),
+    ...htmlwebpackplugins,
     new webpack.HotModuleReplacementPlugin()
   ],
   devServer: {
